@@ -18,17 +18,17 @@ access_token_secret = "WasBYGaPFyrm7Wx7rObEOJAcjH9GNFKpuVfBfeuBoxpJg"
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth,wait_on_rate_limit=True)
-filename = 'lebrontweets.csv'
+filename = 'tweets.csv'
 # open/create a csv file to append data
 csvFile = open(filename, 'a')
 # use csv writer
 csvWriter = csv.writer(csvFile)
-query = "#lebron"
-count = 10
+query = "america"
+count = 3
 lang = "en"
 since = "2018-06-30"
 tweetdf = []
-
+print('Preparing to stream your tweets....')
 for tweet in tweepy.Cursor(api.search, q=query, count=count, lang=lang, since=since).items():
     myString = str(tweet)
     startString = 'text='
@@ -80,6 +80,7 @@ for index in range(1,int(len(sentiments['documents']))):
 json_response = pd.DataFrame()
 json_response = pd.concat([json_output.reset_index(drop=True), json_sentiment.reset_index(drop=True)], axis=1)
 json_response.columns = ['tweets', 'sentiment']
+json_response = json_response[json_response.sentiment!=.5]
 json_response = json.dumps(json_response.to_dict(orient='records'))
 print(json_response)
 
@@ -88,8 +89,8 @@ print(json_response)
 df_response = pd.DataFrame()
 df_response = pd.concat([json_output.reset_index(drop=True), json_sentiment.reset_index(drop=True)], axis=1)
 df_response.columns = ['tweets', 'sentiment']
-hist = np.histogram(df_response['sentiment'], bins=5)
+df_response = df_response[df_response.sentiment!=.5]
 fig = plt.hist(df_response['sentiment'])
-plt.savefig("sentiment_dist2.png")
+plt.savefig(str(query+'sentiment.png'))
 
 
