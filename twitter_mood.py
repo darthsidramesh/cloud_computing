@@ -23,10 +23,10 @@ filename = 'tweets.csv'
 csvFile = open(filename, 'a')
 # use csv writer
 csvWriter = csv.writer(csvFile)
-query = "america"
-count = 3
+query = "the first purge"
+count = 1
 lang = "en"
-since = "2018-06-30"
+since = "2018-07-04"
 tweetdf = []
 print('Preparing to stream your tweets....')
 for tweet in tweepy.Cursor(api.search, q=query, count=count, lang=lang, since=since).items():
@@ -71,7 +71,7 @@ print(sentiments)
 
 json_output = pd.DataFrame()
 json_sentiment = pd.DataFrame()
-for index in range(1,int(len(sentiments['documents']))):
+for index in range(0,int(len(sentiments['documents']))):
     tweet = [json_tweets['documents'][index]['text']]
     json_output = json_output.append(tweet)
     score = [sentiments['documents'][index]['score']]
@@ -83,6 +83,21 @@ json_response.columns = ['tweets', 'sentiment']
 json_response = json_response[json_response.sentiment!=.5]
 json_response = json.dumps(json_response.to_dict(orient='records'))
 print(json_response)
+
+#key phrase extraction
+key_phrase_url = text_analytics_base_url + 'keyPhrases'
+response = requests.post(key_phrase_url, headers=headers, json=json_tweets)
+key_phrases = response.json()
+print(key_phrases)
+
+key_phrase_df = pd.DataFrame()
+for index in range(0, int(len(key_phrases['documents']))):
+    phrase = pd.Series(str(' '.join(key_phrases['documents'][index]['keyPhrases'])))
+    key_phrase_df = key_phrase_df.append(phrase, ignore_index=True)
+
+#key_phrase_df is a one column df of words
+print(key_phrase_df.head(10))
+
 
 
 #histogram
