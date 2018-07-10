@@ -5,6 +5,8 @@ import string
 import pandas as pd
 import json
 import requests
+import numpy as np
+import matplotlib.pyplot as plt
 
 if sys.version_info[0] < 3:
   input = raw_input
@@ -80,3 +82,14 @@ json_response = pd.concat([json_output.reset_index(drop=True), json_sentiment.re
 json_response.columns = ['tweets', 'sentiment']
 json_response = json.dumps(json_response.to_dict(orient='records'))
 print(json_response)
+
+
+#histogram
+df_response = pd.DataFrame
+df_response = pd.concat([json_output.reset_index(drop=True), json_sentiment.reset_index(drop=True)], axis=1)
+df_response.columns = ['tweets', 'sentiment']
+hist = np.histogram(df_response['sentiment'], bins=5)
+fig = plt.hist(df_response['sentiment'])
+plt.savefig("sentiment_dist.png")
+
+
