@@ -3,6 +3,8 @@ import csv
 import tweepy
 import string
 import pandas as pd
+import json
+import requests
 
 if sys.version_info[0] < 3:
   input = raw_input
@@ -20,7 +22,7 @@ csvFile = open(filename, 'a')
 # use csv writer
 csvWriter = csv.writer(csvFile)
 query = "#lebron"
-count = 1
+count = 10
 lang = "en"
 since = "2018-06-30"
 tweetdf = []
@@ -42,7 +44,7 @@ tweets.columns = ['id', 'text',  'language']
 tweets.update(tweets.id.astype(str))
 tweets = tweets[["language", "id", "text"]]
 json_tweets = {"documents": tweets.to_dict(orient='records')}
-#json_tweets = json.dump(json_tweets)
+
 
 with open('result.json', 'w') as fp:
     json.dump(json_tweets, fp)
@@ -50,7 +52,6 @@ with open('result.json', 'w') as fp:
 with open('result.json') as f:
     json_tweets = json.load(f)
 
-print(json_tweets)
 
 
 
@@ -62,6 +63,20 @@ sentiment_api_url = text_analytics_base_url + "sentiment"
 headers = {"Ocp-Apim-Subscription-Key": subscription_key}
 response  = requests.post(sentiment_api_url, headers=headers, json=json_tweets)
 sentiments = response.json()
+
+
 print(sentiments)
 
+json_output = pd.DataFrame()
+json_sentiment = pd.DataFrame()
+for index in range(1,int(len(sentiments['documents']))):
+    tweet = [json_tweets['documents'][index]['text']]
+    json_output = json_output.append(tweet)
+    score = [sentiments['documents'][index]['score']]
+    json_sentiment = json_sentiment.append(score)
 
+json_response = pd.DataFrame()
+json_response = pd.concat([json_output.reset_index(drop=True), json_sentiment.reset_index(drop=True)], axis=1)
+json_response.columns = ['tweets', 'sentiment']
+json_response = json.dumps(json_response.to_dict(orient='records'))
+print(json_response)
