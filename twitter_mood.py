@@ -23,18 +23,15 @@ filename = 'tweets.csv'
 csvFile = open(filename, 'a')
 # use csv writer
 csvWriter = csv.writer(csvFile)
-query = "the first purge"
+query = "heat wave"
 count = 1
 lang = "en"
-since = "2018-07-04"
+since = "2018-07-10"
 tweetdf = []
 print('Preparing to stream your tweets....')
 for tweet in tweepy.Cursor(api.search, q=query, count=count, lang=lang, since=since).items():
-    myString = str(tweet)
-    startString = 'text='
-    endString = 'is_quote_status='
-    print(myString)
-    tweetdf.append(myString[myString.find(startString)+len(startString):myString.find(endString)])
+    print(tweet.text)
+    tweetdf.append(tweet.text)
 
 tweets = pd.DataFrame(tweetdf).drop_duplicates()
 print(tweets)
@@ -92,13 +89,15 @@ print(key_phrases)
 
 key_phrase_df = pd.DataFrame()
 for index in range(0, int(len(key_phrases['documents']))):
-    phrase = pd.Series(str(' '.join(key_phrases['documents'][index]['keyPhrases'])))
+    phrase = pd.Series(str(' '.join(key_phrases['documents'][index]['keyPhrases'])).lower())
     key_phrase_df = key_phrase_df.append(phrase, ignore_index=True)
 
 #key_phrase_df is a one column df of words
+key_phrase_df.columns = ['keyPhrases']
 print(key_phrase_df.head(10))
 
-
+wordcounts = key_phrase_df.keyPhrases.str.split(expand=True).stack().value_counts()
+print(wordcounts)
 
 #histogram
 df_response = pd.DataFrame()
