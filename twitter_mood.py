@@ -177,4 +177,4 @@ query = "world cup"
 count = 2
 since = "2018-07-14"
 num_topics = 5
-main(query, count, since, 5)
+main(query, count, since, num_topics)
