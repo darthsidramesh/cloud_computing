@@ -10,7 +10,7 @@ from nltk.stem.porter import PorterStemmer
 from nltk.corpus import stopwords
 from gensim import corpora, models
 import gensim
-
+from wordcloud import WordCloud
 
 if sys.version_info[0] < 3:
   input = raw_input
@@ -143,6 +143,12 @@ def extract_topics(filename, Uname, num_topics):
     dictionary = corpora.Dictionary(text_corpus)
     corpus = [dictionary.doc2bow(text) for text in text_corpus]
     ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=num_topics, id2word=dictionary, passes=60)
+    for t in range(ldamodel.num_topics):
+        plt.figure()
+        plt.imshow(WordCloud().fit_words(dict(ldamodel.show_topic(t, 200))))
+        plt.axis("off")
+        plt.title("Topic #" + str(t))
+        plt.show()
     print 'Topics for ', Uname, '\n'
     for topics in ldamodel.print_topics(num_topics=num_topics, num_words=7):
         print topics, "\n"
@@ -173,8 +179,8 @@ def main(query, count, since, num_topics):
     extract_topics(filename, query, num_topics)
 
 
-query = "world cup"
-count = 2
+query = "lakers"
+count = 5
 since = "2018-07-14"
 num_topics = 5
 main(query, count, since, num_topics)
