@@ -15,15 +15,15 @@ from wordcloud import WordCloud
 if sys.version_info[0] < 3:
   input = raw_input
 # Azure credentials
-subscription_key = 'b8760a9d6dc646bb846a5387723b4083'
+subscription_key = ''#subscription key
 assert subscription_key
 text_analytics_base_url = "https://westus2.api.cognitive.microsoft.com/text/analytics/v2.0/"
 headers = {"Ocp-Apim-Subscription-Key": subscription_key}
 # Twitter credentials
-consumer_key = "eTzZbHURKGFeumEqLO8Cdto36"
-consumer_secret = "qE9M14IdJmpneUFdhYOxCi4hsKDz5dyYzJwRwXP2aKqCSSMnP3"
-access_token = "1009092444023975936-NzWwBRhztdts13A1NnTflXL2bgOhhV"
-access_token_secret = "WasBYGaPFyrm7Wx7rObEOJAcjH9GNFKpuVfBfeuBoxpJg"
+consumer_key = ''#your key
+consumer_secret = ''#your secret
+access_token = ''#your token
+access_token_secret = ''#your secret
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth,wait_on_rate_limit=True)
